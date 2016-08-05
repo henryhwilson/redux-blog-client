@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
+import Posts from '../containers/postsContainer';
 
 // example class based component (smart component)
-class App extends Component {
+class Index extends Component {
   constructor(props) {
     super(props);
 
@@ -11,11 +12,12 @@ class App extends Component {
 
   render() {
     return (
-      <div>
-        {this.props.children}
+      <div id="content">
+        <h1>Welcome to the Orange Weekly Digest.</h1>
+        <Posts />
       </div>
     );
   }
 }
 
-export default App;
+export default Index;
