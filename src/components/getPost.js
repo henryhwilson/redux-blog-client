@@ -28,7 +28,15 @@ class GetPost extends Component {
 
   editPost() {
     console.log('Editing mode');
-    this.setState({ isEditing: true });
+    if (this.props.state.posts.post != null) {
+      const post = this.props.state.posts.post;
+      this.setState({
+        isEditing: true,
+        title: post.title,
+        tags: post.tags,
+        content: post.content,
+      });
+    }
   }
 
   cancelEdit() {

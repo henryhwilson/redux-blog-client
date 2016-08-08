@@ -1,7 +1,8 @@
 import Axios from 'axios';
 import { browserHistory } from 'react-router';
 
-const ROOT_URL = 'https://cs52-blog.herokuapp.com/api';
+
+const ROOT_URL = 'https://wilson-blog-server.herokuapp.com/api'; // local is 'http://localhost:9090/api' cs52: 'https://cs52-blog.herokuapp.com/api';
 const API_KEY = '?key=H_WILSON';
 
 export const ActionTypes = {
