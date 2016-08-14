@@ -28,8 +28,8 @@ class GetPost extends Component {
 
   editPost() {
     console.log('Editing mode');
-    if (this.props.state.posts.post != null) {
-      const post = this.props.state.posts.post;
+    if (this.props.post != null) {
+      const post = this.props.post;
       this.setState({
         isEditing: true,
         title: post.title,
@@ -54,6 +54,7 @@ class GetPost extends Component {
       tags: this.state.tags,
       content: this.state.content,
     };
+    this.setState({ isEditing: false });
     this.props.updatePost(post);
   }
 
@@ -62,10 +63,10 @@ class GetPost extends Component {
 
     console.log('Rendering!');
 
-    console.log(this.props.state);
+    console.log(this.props.post);
 
-    if (this.props.state.posts.post != null) {
-      const post = this.props.state.posts.post;
+    if (this.props.post != null) {
+      const post = this.props.post;
       if (this.state.isEditing === true) {
         PostComponent = (<div id="editPost">
           Title: <input type="text" placeholder="title..." onChange={(event) => { this.setState({ title: event.target.value }); }} defaultValue={post.title} />
@@ -97,10 +98,10 @@ class GetPost extends Component {
   }
 }
 
-const mapStateToProps = (state) => (
-  {
-    state,
-  }
-);
+const mapStateToProps = (state) => {
+  return ({
+    post: state.posts.post,
+  });
+};
 
 export default connect(mapStateToProps, Actions)(GetPost);

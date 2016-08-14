@@ -19,12 +19,12 @@ class Posts extends Component {
 
   render() {
     console.log('abt to print: ');
-    console.log(this.props.state);
+    console.log(this.props.posts);
 
     let PostsComponent = '';
 
-    if (this.props.state.posts.all != null) {
-      PostsComponent = this.props.state.posts.all.map((post) =>
+    if (this.props.posts != null) {
+      PostsComponent = this.props.posts.map((post) =>
         <li key={post.id}><Link to={`/posts/${post.id}`}>{post.title}</Link><span id="tags">{post.tags}</span></li>
       );
     }
@@ -37,11 +37,11 @@ class Posts extends Component {
   }
 }
 
-const mapStateToProps = (state) => (
-  {
-    state,
-  }
-);
+const mapStateToProps = (state) => {
+  return ({
+    posts: state.posts.all,
+  });
+};
 
 // react-redux glue -- outputs Container that know state in props
 export default connect(mapStateToProps, Actions)(Posts);

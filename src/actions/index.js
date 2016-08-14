@@ -2,16 +2,15 @@ import Axios from 'axios';
 import { browserHistory } from 'react-router';
 
 
-const ROOT_URL = 'https://wilson-blog-server.herokuapp.com/api'; // local is 'http://localhost:9090/api' cs52: 'https://cs52-blog.herokuapp.com/api';
+const ROOT_URL = 'http://localhost:9090/api'; // https://wilson-blog-server.herokuapp.com/api'; // local is 'http://localhost:9090/api' cs52: 'https://cs52-blog.herokuapp.com/api';
 const API_KEY = '?key=H_WILSON';
 
 export const ActionTypes = {
   FETCH_POSTS: 'FETCH_POSTS',
   FETCH_POST: 'FETCH_POST',
-  CREATE_POST: 'CREATE_POST',
-  UPDATE_POST: 'UPDATE_POST',
-  DELETE_POST: 'DELETE_POST',
-  API_ERROR: 'API_ERROR',
+  AUTH_USER: 'AUTH_USER',
+  DEAUTH_USER: 'DEAUTH_USER',
+  AUTH_ERROR: 'AUTH_ERROR',
 };
 
 export function fetchPosts() {
@@ -23,7 +22,6 @@ export function fetchPosts() {
       dispatch({ type: ActionTypes.FETCH_POSTS, payload: response.data });
     }).catch(error => {
       console.log('Fetched posts failed');
-      dispatch({ type: ActionTypes.API_ERROR });
     });
   };
 }
@@ -36,7 +34,6 @@ export function fetchPost(id) {
       dispatch({ type: ActionTypes.FETCH_POST, payload: response.data });
     }).catch(error => {
       console.log('Fetched post failed');
-      dispatch({ type: ActionTypes.API_ERROR });
     });
   };
 }
@@ -44,11 +41,9 @@ export function fetchPost(id) {
 export function createPost(post) {
   const fields = { title: post.title, content: post.content, tags: post.tags };
   return (dispatch) => {
-    Axios.post(`${ROOT_URL}/posts${API_KEY}`, fields).then(response => {
-      dispatch({ type: ActionTypes.CREATE_POST });
+    Axios.post(`${ROOT_URL}/posts${API_KEY}`, fields, { headers: { authorization: localStorage.getItem('token') } }).then(response => {
       browserHistory.push('/');
     }).catch(error => {
-      dispatch({ type: ActionTypes.API_ERROR });
     });
   };
 }
@@ -56,22 +51,62 @@ export function createPost(post) {
 export function updatePost(post) {
   const fields = { title: post.title, content: post.content, tags: post.tags };
   return (dispatch) => {
-    Axios.put(`${ROOT_URL}/posts/${post.id}${API_KEY}`, fields).then(response => {
-      dispatch({ type: ActionTypes.UPDATE_POST });
+    Axios.put(`${ROOT_URL}/posts/${post.id}${API_KEY}`, fields, { headers: { authorization: localStorage.getItem('token') } }).then(response => {
       console.log('Updated successfully');
       browserHistory.push('/');
     }).catch(error => {
-      dispatch({ type: ActionTypes.API_ERROR });
     });
   };
 }
 
 export function deletePost(id) {
   return (dispatch) => {
-    Axios.delete(`${ROOT_URL}/posts/${id}${API_KEY}`).then(response => {
+    Axios.delete(`${ROOT_URL}/posts/${id}${API_KEY}`, { headers: { authorization: localStorage.getItem('token') } }).then(response => {
       browserHistory.push('/');
     }).catch(error => {
-      dispatch({ type: ActionTypes.API_ERROR });
     });
+  };
+}
+
+// trigger to deauth if there is error
+// can also use in your error reducer if you have one to display an error message
+export function authError(error) {
+  return {
+    type: ActionTypes.AUTH_ERROR,
+    message: error,
+  };
+}
+
+export function signinUser(user) {
+  return (dispatch) => {
+    Axios.post(`${ROOT_URL}/signin${API_KEY}`, user).then(response => {
+      dispatch({ type: ActionTypes.AUTH_USER });
+      console.log(response);
+      localStorage.setItem('token', response.data.token);
+    }).catch(error => {
+      dispatch(authError(`Sign In Failed: ${error.response.data}`));
+    });
+  };
+}
+
+export function signupUser(user) {
+  return (dispatch) => {
+    Axios.post(`${ROOT_URL}/signup${API_KEY}`, user).then(response => {
+      dispatch({ type: ActionTypes.AUTH_USER });
+      localStorage.setItem('token', response.data.token);
+      browserHistory.push('/');
+    }).catch(error => {
+      dispatch(authError(`Sign Up Failed: ${error.response.data}`));
+    });
+  };
+}
+
+// deletes token from localstorage
+// and deauths
+export function signoutUser() {
+  return (dispatch) => {
+    localStorage.removeItem('token');
+    dispatch({ type: ActionTypes.DEAUTH_USER });
+    browserHistory.push('/');
   };
 }
