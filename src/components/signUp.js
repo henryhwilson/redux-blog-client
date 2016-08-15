@@ -27,10 +27,18 @@ class SignUp extends Component {
   }
 
   render() {
+    let invalidLoginError = '';
+
+    if (this.props.error.authError) {
+      invalidLoginError = (<div id="error">{this.props.error.message}</div>);
+      this.props.error.authError = false;
+    }
+
     const SignUpComponent = (<div id="account">
-      Full Name: <input type="text" placeholder="full name..." onChange={(event) => { this.setState({ full_name: event.target.value }); }} />
-      Email: <input type="text" placeholder="email..." onChange={(event) => { this.setState({ email: event.target.value }); }} />
-      Password: <input type="password" placeholder="password..." onChange={(event) => { this.setState({ password: event.target.value }); }} />
+      {invalidLoginError}
+      Full Name: <input type="text" placeholder="Full Name..." onChange={(event) => { this.setState({ full_name: event.target.value }); }} />
+      Email: <input type="text" placeholder="Email..." onChange={(event) => { this.setState({ email: event.target.value }); }} />
+      Password: <input type="password" placeholder="Password..." onChange={(event) => { this.setState({ password: event.target.value }); }} />
       <div>
         <button onClick={() => { this.signupUser(); }}>Create Account</button>
       </div>
@@ -47,6 +55,7 @@ class SignUp extends Component {
 const mapStateToProps = (state) => {
   return ({
     auth: state.auth,
+    error: state.error,
   });
 };
 

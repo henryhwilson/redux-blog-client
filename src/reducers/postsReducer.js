@@ -12,7 +12,7 @@ const PostsReducer = (state = { posts }, action) => {
     case ActionTypes.FETCH_POST:
       return Object.assign({}, state.posts, { post: action.payload });
     default:
-      return state;
+      return posts;
   }
 };
 

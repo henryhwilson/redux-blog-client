@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import * as Actions from '../actions';
+import { Link } from 'react-router';
 
 // example class based component (smart component)
 class GetPost extends Component {
@@ -26,6 +27,10 @@ class GetPost extends Component {
     this.props.fetchPost(this.props.params.id);
   }
 
+  componentWillUpdate() {
+    this.props.fetchPost(this.props.params.id);
+  }
+
   editPost() {
     console.log('Editing mode');
     if (this.props.post != null) {
@@ -44,7 +49,9 @@ class GetPost extends Component {
   }
 
   deletePost() {
-    this.props.deletePost(this.props.params.id);
+    if (this.props.auth.authenticated && this.props.auth.user_id === this.props.post.author_id) {
+      this.props.deletePost(this.props.params.id);
+    }
   }
 
   updatePost() {
@@ -54,8 +61,11 @@ class GetPost extends Component {
       tags: this.state.tags,
       content: this.state.content,
     };
-    this.setState({ isEditing: false });
-    this.props.updatePost(post);
+    if (this.props.auth.authenticated && this.props.auth.user_id === this.props.post.author_id) {
+      this.setState({ isEditing: false });
+      this.props.updatePost(post);
+      this.props.fetchPost(this.props.params.id);
+    }
   }
 
   render() {
@@ -67,11 +77,19 @@ class GetPost extends Component {
 
     if (this.props.post != null) {
       const post = this.props.post;
+      let editDeleteButtons = '';
+      if (this.props.auth.authenticated && this.props.auth.user_id === this.props.post.author_id) {
+        editDeleteButtons = (
+          <div>
+            <button onClick={() => { this.editPost(); }}>Edit</button>
+            <button onClick={() => { this.deletePost(); }}>Delete</button>
+          </div>);
+      }
       if (this.state.isEditing === true) {
         PostComponent = (<div id="editPost">
-          Title: <input type="text" placeholder="title..." onChange={(event) => { this.setState({ title: event.target.value }); }} defaultValue={post.title} />
-          Tags: <input type="text" placeholder="tags..." onChange={(event) => { this.setState({ tags: event.target.value }); }} defaultValue={post.tags} />
-          <textarea onChange={(event) => { this.setState({ content: event.target.value }); }} defaultValue={post.content} />
+          Title: <input type="text" placeholder="Title..." onChange={(event) => { this.setState({ title: event.target.value }); }} defaultValue={post.title} />
+          Tags: <input type="text" placeholder="Tags..." onChange={(event) => { this.setState({ tags: event.target.value }); }} defaultValue={post.tags} />
+          <textarea placeholder="Content..." onChange={(event) => { this.setState({ content: event.target.value }); }} defaultValue={post.content} />
           <div>
             <button onClick={() => { this.updatePost(); }}>Submit</button>
             <button onClick={() => { this.cancelEdit(); }}>Cancel</button>
@@ -79,12 +97,11 @@ class GetPost extends Component {
         </div>);
       } else {
         PostComponent = (<div>
-          <h1>{post.title}</h1>
-          <h2>Tags: {post.tags}</h2>
-          <p>{post.content}</p>
+          <h2><span id="tags-header">Author:</span> {post.author}</h2>
+          <h2><span id="tags-header">Categories:</span> {post.tags}</h2>
+          <div id="post-body">{post.content}</div>
           <div>
-            <button onClick={() => { this.editPost(); }}>Edit</button>
-            <button onClick={() => { this.deletePost(); }}>Delete</button>
+            {editDeleteButtons}
           </div>
         </div>);
       }
@@ -92,6 +109,7 @@ class GetPost extends Component {
 
     return (
       <div id="content">
+        <h1><Link to="/" id="title-header">Recent Posts </Link> / {this.props.post ? this.props.post.title : ''} </h1>
         {PostComponent}
       </div>
     );
@@ -101,6 +119,7 @@ class GetPost extends Component {
 const mapStateToProps = (state) => {
   return ({
     post: state.posts.post,
+    auth: state.auth,
   });
 };
 

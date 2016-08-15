@@ -2,7 +2,7 @@ import Axios from 'axios';
 import { browserHistory } from 'react-router';
 
 
-const ROOT_URL = 'http://localhost:9090/api'; // https://wilson-blog-server.herokuapp.com/api'; // local is 'http://localhost:9090/api' cs52: 'https://cs52-blog.herokuapp.com/api';
+const ROOT_URL = 'https://orange-weekly-digest.herokuapp.com/api'; // local is 'http://localhost:9090/api' cs52: 'https://cs52-blog.herokuapp.com/api';
 const API_KEY = '?key=H_WILSON';
 
 export const ActionTypes = {
@@ -53,7 +53,6 @@ export function updatePost(post) {
   return (dispatch) => {
     Axios.put(`${ROOT_URL}/posts/${post.id}${API_KEY}`, fields, { headers: { authorization: localStorage.getItem('token') } }).then(response => {
       console.log('Updated successfully');
-      browserHistory.push('/');
     }).catch(error => {
     });
   };
@@ -77,12 +76,20 @@ export function authError(error) {
   };
 }
 
+export function loginAction(userId) {
+  return {
+    type: ActionTypes.AUTH_USER,
+    user_id: userId,
+  };
+}
+
 export function signinUser(user) {
   return (dispatch) => {
     Axios.post(`${ROOT_URL}/signin${API_KEY}`, user).then(response => {
-      dispatch({ type: ActionTypes.AUTH_USER });
-      console.log(response);
+      dispatch({ type: ActionTypes.AUTH_USER, user_id: response.data.user_id });
+      localStorage.setItem('user_id', response.data.user_id);
       localStorage.setItem('token', response.data.token);
+      browserHistory.push('/');
     }).catch(error => {
       dispatch(authError(`Sign In Failed: ${error.response.data}`));
     });
@@ -92,7 +99,8 @@ export function signinUser(user) {
 export function signupUser(user) {
   return (dispatch) => {
     Axios.post(`${ROOT_URL}/signup${API_KEY}`, user).then(response => {
-      dispatch({ type: ActionTypes.AUTH_USER });
+      dispatch({ type: ActionTypes.AUTH_USER, user_id: response.data.user_id });
+      localStorage.setItem('user_id', response.data.user_id);
       localStorage.setItem('token', response.data.token);
       browserHistory.push('/');
     }).catch(error => {

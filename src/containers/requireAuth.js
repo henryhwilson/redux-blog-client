@@ -25,6 +25,7 @@ export default function (ComposedComponent) {
     }
 
     render() {
+      console.log('this is a protected component');
       return (
         <ComposedComponent {...this.props} />
       );
@@ -32,7 +33,7 @@ export default function (ComposedComponent) {
   }
   const mapStateToProps = (state) => {
     return ({
-      authenticated: state.auth,
+      authenticated: state.auth.authenticated,
     });
   };
 

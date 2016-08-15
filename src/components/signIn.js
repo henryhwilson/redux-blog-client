@@ -23,13 +23,22 @@ class SignIn extends Component {
   }
 
   render() {
-    const SignInComponent = (<div id="account">
-      Email: <input type="text" placeholder="email..." onChange={(event) => { this.setState({ email: event.target.value }); }} />
-      Password: <input type="password" placeholder="password..." onChange={(event) => { this.setState({ password: event.target.value }); }} />
-      <div>
-        <button onClick={() => { this.signinUser(); }}>Login</button>
-      </div>
-    </div>);
+    let invalidLoginError = '';
+
+    if (this.props.error.authError) {
+      invalidLoginError = (<div id="error">{this.props.error.message}</div>);
+      this.props.error.authError = false;
+    }
+
+    const SignInComponent = (
+      <div id="account">
+        {invalidLoginError}
+        Email: <input type="text" placeholder="Email..." onChange={(event) => { this.setState({ email: event.target.value }); }} />
+        Password: <input type="password" placeholder="Password..." onChange={(event) => { this.setState({ password: event.target.value }); }} />
+        <div>
+          <button onClick={() => { this.signinUser(); }}>Login</button>
+        </div>
+      </div>);
 
     return (
       <div id="content">
@@ -42,6 +51,7 @@ class SignIn extends Component {
 const mapStateToProps = (state) => {
   return ({
     auth: state.auth,
+    error: state.error,
   });
 };
 

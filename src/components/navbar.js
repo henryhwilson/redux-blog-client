@@ -19,7 +19,7 @@ class Layout extends Component {
 
   render() {
     const signIn = (<div><Link to="/signin" id="link">Sign In</Link><Link to="/signup" id="link">Create Account</Link></div>);
-    const signOut = (<Link to="#signout" onClick={() => { this.signOut(); }} id="link">Logout</Link>);
+    const signOut = (<div><Link to="/posts/create" id="link">New Post</Link><Link to="#signout" onClick={() => { this.signOut(); }} id="link">Logout</Link></div>);
 
     let accountLinks;
     console.log('state is');
@@ -34,8 +34,7 @@ class Layout extends Component {
       <div>
         <nav>
           <Link to="/" id="logo">Orange Weekly Digest</Link>
-          <div>
-            <Link to="/posts/create" id="link">+ Create Post</Link>
+          <div id="navlinks">
             {accountLinks}
           </div>
         </nav>

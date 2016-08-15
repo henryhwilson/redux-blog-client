@@ -31,9 +31,9 @@ class CreatePost extends Component {
 
   render() {
     const PostComponent = (<div id="editPost">
-      Title: <input type="text" placeholder="title..." onChange={(event) => { this.setState({ title: event.target.value }); }} />
-      Tags: <input type="text" placeholder="tags..." onChange={(event) => { this.setState({ tags: event.target.value }); }} />
-      <textarea onChange={(event) => { this.setState({ content: event.target.value }); }} />
+      Title: <input type="text" placeholder="Title..." onChange={(event) => { this.setState({ title: event.target.value }); }} />
+      Tags: <input type="text" placeholder="Tags..." onChange={(event) => { this.setState({ tags: event.target.value }); }} />
+      <textarea placeholder="Content..." onChange={(event) => { this.setState({ content: event.target.value }); }} />
       <div>
         <button onClick={() => { this.createPost(); }}>Submit</button>
         <button onClick={() => { this.cancelCreate(); }}>Cancel</button>
