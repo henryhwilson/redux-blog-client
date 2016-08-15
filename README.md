@@ -1,7 +1,3 @@
-I created a basic CRUD blog.
+I added errors and nice styling.
 
-I didn't have any major problems, but didn't have time to do the extra credit.
-
-I used a container only for the index.js file where I pull in all the posts.
-
-Otherwise, createPost and getPost are connected components themselves.
+In addition, I don't display the edit/delete buttons if the user isn't logged in to their account.
